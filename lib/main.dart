@@ -105,26 +105,134 @@ class _MainPageState extends State<MainPage> {
                   child: Logo(),
                 )
               : ListView.separated(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                  padding: EdgeInsets.all(16.0),
                   itemCount: results['results'].length,
                   itemBuilder: (context, i) {
                     var list = results['results'];
-                    return ListTile(
-                      onTap: () {},
-                      leading: Image.network(
-                        'https://d1f7f1axn40slq.cloudfront.net/${list[i]['poster']}?w=100',
-                        fit: BoxFit.contain,
-                        width: 60.0,
+                    return InkWell(
+                      onTap: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return new MovieDetails(movie: list[i]);
+                        }));
+                      },
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          IntrinsicHeight(
+                            child: Image.network(
+                              'https://images.moviebuff.com/${list[i]['poster']}?w=160',
+                              fit: BoxFit.contain,
+                              width: 80.0,
+                            ),
+                          ),
+                          SizedBox(width: 16.0),
+                          Expanded(
+                            child: Column(
+                              children: <Widget>[
+                                Text(
+                                  list[i]['name'],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline
+                                      .apply(
+                                          color: Theme.of(context)
+                                              .primaryColorDark),
+                                ),
+                                Text(list[i]['info']['synopsis'] ?? '-')
+                              ],
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
+                          )
+                        ],
                       ),
-                      title: Text(list[i]['name'],style: Theme.of(context).textTheme.headline,),
-                      dense: false,
-                      subtitle: Text(list[i]['info']['synopsis'] ?? '-'),
                     );
                   },
-                  separatorBuilder: (BuildContext context, int index) {
-                    return Divider();
+                  separatorBuilder: (context, index) {
+                    return Divider(
+                      height: 32.0,
+                      color: Theme.of(context).primaryColorLight,
+                    );
                   },
                 )),
+    );
+  }
+}
+
+class MovieDetails extends StatelessWidget {
+  const MovieDetails({
+    Key key,
+    @required this.movie,
+  }) : super(key: key);
+
+  final movie;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(movie['name']),
+      ),
+      body: ListView(
+        padding: EdgeInsets.all(16.0),
+        children: <Widget>[
+          Text(
+            movie['info']['synopsis'] ?? '-',
+            style: Theme.of(context)
+                .textTheme
+                .subhead
+                .apply(color: Theme.of(context).primaryColor),
+          ),
+          SizedBox(
+            height: 16.0,
+          ),
+          SizedBox(
+            height: 200.0,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: List<Widget>.from(movie['info']['cast'].map((c) {
+                return SizedBox(
+                  width: 216.0,
+                  child: Padding(
+                    padding: EdgeInsets.only(right: 16.0),
+                    child: Stack(
+                      children: <Widget>[
+                        Positioned.fill(
+                            child: Image.network(
+                          'https://images.moviebuff.com/${c['poster']}?w=400',
+                          fit: BoxFit.cover,
+                        )),
+                        Positioned(
+                          bottom: 8.0,
+                          left: 8.0,
+                          right: 8.0,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.bottomLeft,
+                            child: Container(
+                              color: Colors.black
+                                  .withOpacity(0.7),
+                              padding: EdgeInsets.all(4.0),
+                              child: Text(
+                                c['name'],
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline
+                                    .apply(
+                                        color: Theme.of(context).primaryColorDark),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              })),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
