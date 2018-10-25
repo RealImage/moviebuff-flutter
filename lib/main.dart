@@ -67,14 +67,16 @@ class _MainPageState extends State<MainPage> {
               child: TextField(
                 onSubmitted: (val) {
                   print("FETCHING ${val}");
-                  http
-                      .get(
-                          'https://moviebuff-index.herokuapp.com/search/movie?query=${val}')
-                      .then((resp) {
-                    setState(() {
-                      results = json.decode(resp.body);
+                  setState(() {
+                    results = null;
+                    http
+                        .get(
+                            'https://moviebuff-index.herokuapp.com/search/movie?query=${val}')
+                        .then((resp) {
+                      setState(() {
+                        results = json.decode(resp.body);
+                      });
                     });
-                    print(results);
                   });
                 },
                 decoration: InputDecoration(
@@ -102,7 +104,7 @@ class _MainPageState extends State<MainPage> {
       body: Center(
           child: this.results == null
               ? Center(
-                  child: Logo(),
+                  child: CircularProgressIndicator(),
                 )
               : ListView.separated(
                   padding: EdgeInsets.all(16.0),
@@ -210,8 +212,7 @@ class MovieDetails extends StatelessWidget {
                             fit: BoxFit.scaleDown,
                             alignment: Alignment.bottomLeft,
                             child: Container(
-                              color: Colors.black
-                                  .withOpacity(0.7),
+                              color: Colors.black.withOpacity(0.7),
                               padding: EdgeInsets.all(4.0),
                               child: Text(
                                 c['name'],
@@ -219,7 +220,8 @@ class MovieDetails extends StatelessWidget {
                                     .textTheme
                                     .headline
                                     .apply(
-                                        color: Theme.of(context).primaryColorDark),
+                                        color:
+                                            Theme.of(context).primaryColorDark),
                               ),
                             ),
                           ),
