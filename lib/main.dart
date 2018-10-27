@@ -189,19 +189,19 @@ class MovieDetails extends StatelessWidget {
             height: 16.0,
           ),
           SizedBox(
-            height: 200.0,
+            height: 250.0,
             child: ListView(
               scrollDirection: Axis.horizontal,
               children: List<Widget>.from(movie['info']['cast'].map((c) {
                 return SizedBox(
-                  width: 216.0,
+                  width: 250.0+16.0,
                   child: Padding(
                     padding: EdgeInsets.only(right: 16.0),
                     child: Stack(
                       children: <Widget>[
                         Positioned.fill(
                             child: Image.network(
-                          'https://images.moviebuff.com/${c['poster']}?w=400',
+                          'https://images.moviebuff.com/${c['poster']}?w=500',
                           fit: BoxFit.cover,
                         )),
                         Positioned(
